@@ -319,6 +319,7 @@ window.shokherRenderCart = function () {
 
 document.addEventListener("DOMContentLoaded", () => {
   const headerContainer =
+    document.querySelector(".header-actions") ||
     document.querySelector(".nav-container");
 
   if (
