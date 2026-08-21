@@ -1,87 +1,36 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Product | Shokher Alna</title><link rel="stylesheet" href="../style.css"></head><body>
-<div class="announcement-bar"><div class="announcement-inner"><span>Free shipping on orders over $100</span><span>•</span><span>Free local pickup in Jackson Heights</span></div></div>
-<header class="site-header" id="siteHeader"><div class="nav-container"><a class="brand" href="../index.html">
- <img
-  class="brand-logo"
-  src="../assets/logo/logo.png"
-  alt="Shokher Alna logo"></span><span class="brand-copy"><strong>Shokher Alna</strong><small>Traditional &amp; Elegant Fashion</small></span></a><nav class="desktop-nav"><a href="../index.html">Home</a><div class="nav-dropdown open-on-hover">
-
-  <button
-    class="nav-link dropdown-trigger active"
-    type="button"
-    aria-expanded="false"
-  >
-    Shop <span class="chevron">⌄</span>
-  </button><div class="dropdown-menu"><a href="bags.html">Bags</a><a href="jewelry.html">Jewelry</a><a href="sarees.html">Sarees</a><a href="clothing.html">Clothing</a><a href="handpicked-finds.html">Handpicked Finds</a></div></div><a href="../index.html#new-arrivals">New Arrivals</a><a href="../index.html#best-sellers">Best Sellers</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav></div></header>
-<main><section class="category-products"><div class="section-shell"><div id="productNotFound" class="empty-product-message" hidden>This product is no longer available.</div><div id="productPageContent" class="sa-product-detail"><div id="productGallery"></div><div class="product-detail-copy"><p class="eyebrow" id="productCategory"></p><h1 id="productName"></h1><p id="productPrice" class="sa-detail-price"></p><p id="productDescription"></p><p id="productStatus" class="sa-detail-status"></p><div class="product-purchase-actions">
-<button id="productAddToCart" class="sa-add-cart-button" type="button" hidden>Add to Cart</button>
-<a id="productWhatsApp" class="product-order-link" target="_blank" rel="noopener">Order via WhatsApp →</a>
-</div></div></div></div></section></main>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Product | Shokher Alna</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="announcement-bar"><div class="announcement-inner"><span>Free shipping on orders over $100</span><span class="announcement-divider">•</span><span>Free local pickup in Jackson Heights</span></div></div>
+<header class="site-header" id="siteHeader"><div class="nav-container">
+<a class="brand" href="../index.html"><span class="brand-mark">SA</span><span class="brand-copy"><strong>Shokher Alna</strong><small>Traditional &amp; Elegant Fashion</small></span></a>
+<nav class="desktop-nav">
+<a class="nav-link" href="../index.html">Home</a>
+<div class="nav-dropdown open-on-hover"><button class="nav-link dropdown-trigger active" type="button">Shop <span class="chevron">⌄</span></button>
+<div class="dropdown-menu"><a href="bags.html">Bags</a><a href="jewelry.html">Jewelry</a><a href="sarees.html">Sarees</a><a href="clothing.html">Clothing</a><a href="handpicked-finds.html">Handpicked Finds</a></div></div>
+<a class="nav-link" href="../index.html#new-arrivals">New Arrivals</a><a class="nav-link" href="../index.html#best-sellers">Best Sellers</a><a class="nav-link" href="about.html">About</a><a class="nav-link" href="contact.html">Contact</a>
+</nav>
+<div class="header-actions"><a class="social-link" href="https://www.instagram.com/shokher_alna_usa/" target="_blank">Instagram</a><a class="social-link" href="https://www.facebook.com/ShokherAlnaUsa" target="_blank">Facebook</a><button class="menu-toggle" id="menuToggle" type="button"><span></span><span></span><span></span></button></div>
+</div>
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true"><nav><a href="../index.html">Home</a><button class="mobile-collections-toggle" id="mobileCollectionsToggle" type="button">Shop <span>+</span></button><div class="mobile-submenu" id="mobileSubmenu"><a href="bags.html">Bags</a><a href="jewelry.html">Jewelry</a><a href="sarees.html">Sarees</a><a href="clothing.html">Clothing</a><a href="handpicked-finds.html">Handpicked Finds</a></div><a href="../index.html#new-arrivals">New Arrivals</a><a href="../index.html#best-sellers">Best Sellers</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav></div>
+</header>
+<main><section class="category-products"><div class="section-shell">
+<div id="productNotFound" class="empty-product-message" hidden>Product not found.</div>
+<div id="productPageContent" class="sa-product-detail">
+<div id="productGallery"></div>
+<div class="product-detail-copy"><p class="eyebrow" id="productCategory"></p><h1 id="productName"></h1><p id="productPrice" class="sa-detail-price"></p><p id="productDescription"></p><p id="productStatus" class="sa-detail-status"></p><a id="productWhatsApp" class="product-order-link" target="_blank" rel="noopener">Order via WhatsApp →</a></div>
+</div></div></section></main>
 <script src="../data/config.js"></script><script src="../data/products.js"></script><script src="../script.js"></script><script src="../data/simple-gallery.js"></script>
 <script>
-document.addEventListener("DOMContentLoaded",async()=>{
-  const id=new URLSearchParams(window.location.search).get("id");
-  const p=(window.SHOKHER_ALNA_PRODUCTS||[]).find(x=>String(x.id).toLowerCase()===String(id||"").toLowerCase());
-  const content=document.getElementById("productPageContent"),nf=document.getElementById("productNotFound");
-
-  if(!p){content.hidden=true;nf.hidden=false;return;}
-
-  const info=window.getShokherStatusInfo(p);
-  if(!info.visible){content.hidden=true;nf.hidden=false;return;}
-
-  document.title=p.name+" | Shokher Alna";
-  productName.textContent=p.name;
-  productCategory.textContent=(p.category||"").replaceAll("-"," ");
-  productPrice.textContent=p.price?"$"+p.price:"Contact for price";
-  productDescription.textContent=p.description||"";
-  productStatus.textContent=info.message;
-
-  const addButton=document.getElementById("productAddToCart");
-
-  function selectedPhoto(){
-    return window.shokherGetSelectedGalleryImage?.()||{
-      src:`../${p.folder}/main.jpg`,
-      label:"Main",
-      absoluteUrl:new URL(`../${p.folder}/main.jpg`,window.location.href).href
-    };
-  }
-
-  function updateWhatsApp(){
-    if(!info.orderAllowed)return;
-    const photo=selectedPhoto();
-    const base=window.buildWhatsAppOrderUrl(p);
-
-    try{
-      const url=new URL(base);
-      const existing=url.searchParams.get("text")||"";
-      const label=photo.label==="Main"?"Main product photo":`Selected photo: ${photo.label}`;
-      const imageUrl=photo.absoluteUrl||new URL(photo.src,window.location.href).href;
-
-      url.searchParams.set("text",`${existing}
-
-${label}
-Selected image:
-${imageUrl}`);
-
-      productWhatsApp.href=url.toString();
-    }catch(e){
-      productWhatsApp.href=base;
-    }
-  }
-
-  if(info.orderAllowed){
-    addButton.hidden=false;
-    addButton.addEventListener("click",()=>window.shokherAddToCart(p,1,selectedPhoto()));
-    updateWhatsApp();
-  }else{
-    productWhatsApp.hidden=true;
-  }
-
-  document.addEventListener("shokher:gallery-change",updateWhatsApp);
-
-  if(window.shokherRenderSimpleGallery){
-    await window.shokherRenderSimpleGallery(p);
-    updateWhatsApp();
-  }
-});
-</script><style>.sa-product-detail{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:48px;align-items:start}.sa-detail-price{font-size:1.35rem;font-weight:700;margin:18px 0}.sa-detail-status{font-weight:700;margin:18px 0}@media(max-width:800px){.sa-product-detail{grid-template-columns:1fr}}</style></body></html>
+document.addEventListener("DOMContentLoaded",async()=>{const id=new URLSearchParams(location.search).get("id");const product=(window.SHOKHER_ALNA_PRODUCTS||[]).find(p=>String(p.id).toLowerCase()===String(id||"").toLowerCase());const content=document.getElementById("productPageContent"),nf=document.getElementById("productNotFound");if(!product||["hidden","discontinued"].includes(product.status)){content.hidden=true;nf.hidden=false;return;}document.title=product.name+" | Shokher Alna";document.getElementById("productName").textContent=product.name;document.getElementById("productCategory").textContent=(product.category||"").replaceAll("-"," ");document.getElementById("productPrice").textContent=product.price?"$"+product.price:"Contact for price";document.getElementById("productDescription").textContent=product.description||"";const out=product.status==="out-of-stock";document.getElementById("productStatus").textContent=out?"Currently out of stock":"Available";const wa=document.getElementById("productWhatsApp");if(out||!product.orderEnabled)wa.hidden=true;else wa.href=window.buildWhatsAppOrderUrl(product);if(window.shokherRenderSimpleGallery)await window.shokherRenderSimpleGallery(product);});
+</script>
+<style>.sa-product-detail{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:48px;align-items:start}.sa-detail-price{font-size:1.35rem;font-weight:700;margin:18px 0}.sa-detail-status{font-weight:700;margin:18px 0}.product-detail-copy h1{font-family:"Playfair Display",serif;font-size:clamp(2.4rem,5vw,4.5rem);line-height:1.05;margin:.15em 0}@media(max-width:800px){.sa-product-detail{grid-template-columns:1fr;gap:28px}}</style>
+</body></html>
