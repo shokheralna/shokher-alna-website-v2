@@ -32,7 +32,39 @@
 <div id="productNotFound" class="empty-product-message" hidden>Product not found.</div>
 <div id="productPageContent" class="sa-product-detail">
 <div id="productGallery"></div>
-<div class="product-detail-copy"><p class="eyebrow" id="productCategory"></p><h1 id="productName"></h1><p id="productPrice" class="sa-detail-price"></p><p id="productDescription"></p><p id="productStatus" class="sa-detail-status"></p><a id="productWhatsApp" class="product-order-link" target="_blank" rel="noopener">Order via WhatsApp →</a></div>
+<div class="product-detail-copy">
+  <p class="eyebrow" id="productCategory"></p>
+
+  <h1 id="productName"></h1>
+
+  <p id="productPrice" class="sa-detail-price"></p>
+
+  <p id="productDescription"></p>
+
+  <p id="productStatus" class="sa-detail-status"></p>
+
+  <div class="product-purchase-actions">
+
+    <button
+      id="productAddToCart"
+      class="sa-add-cart-button"
+      type="button"
+      hidden
+    >
+      Add to Cart
+    </button>
+
+    <a
+      id="productWhatsApp"
+      class="product-order-link"
+      target="_blank"
+      rel="noopener"
+    >
+      Order via WhatsApp →
+    </a>
+
+  </div>
+</div>
 </div></div></section></main>
 <script src="../data/config.js"></script><script src="../data/products.js"></script><script src="../script.js"></script><script src="../data/simple-gallery.js"></script>
 <script>
