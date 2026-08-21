@@ -20,20 +20,68 @@
 <script src="../data/config.js"></script><script src="../data/products.js"></script><script src="../script.js"></script><script src="../data/simple-gallery.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded",async()=>{
- const id=new URLSearchParams(location.search).get("id");
- const p=(window.SHOKHER_ALNA_PRODUCTS||[]).find(x=>String(x.id).toLowerCase()===String(id||"").toLowerCase());
- const content=document.getElementById("productPageContent"),nf=document.getElementById("productNotFound");
- if(!p){content.hidden=true;nf.hidden=false;return}
- const info=window.getShokherStatusInfo(p);
- if(!info.visible){content.hidden=true;nf.hidden=false;return}
- document.title=p.name+" | Shokher Alna";
- productName.textContent=p.name;productCategory.textContent=(p.category||"").replaceAll("-"," ");productPrice.textContent=p.price?"$"+p.price:"Contact for price";productDescription.textContent=p.description||"";productStatus.textContent=info.message;
- if(info.orderAllowed){
- productWhatsApp.href=window.buildWhatsAppOrderUrl(p);
- const addButton=document.getElementById("productAddToCart");
- addButton.hidden=false;
- addButton.addEventListener("click",()=>window.shokherAddToCart(p,1));
-}else{productWhatsApp.hidden=true}
- if(window.shokherRenderSimpleGallery)await window.shokherRenderSimpleGallery(p);
+  const id=new URLSearchParams(window.location.search).get("id");
+  const p=(window.SHOKHER_ALNA_PRODUCTS||[]).find(x=>String(x.id).toLowerCase()===String(id||"").toLowerCase());
+  const content=document.getElementById("productPageContent"),nf=document.getElementById("productNotFound");
+
+  if(!p){content.hidden=true;nf.hidden=false;return;}
+
+  const info=window.getShokherStatusInfo(p);
+  if(!info.visible){content.hidden=true;nf.hidden=false;return;}
+
+  document.title=p.name+" | Shokher Alna";
+  productName.textContent=p.name;
+  productCategory.textContent=(p.category||"").replaceAll("-"," ");
+  productPrice.textContent=p.price?"$"+p.price:"Contact for price";
+  productDescription.textContent=p.description||"";
+  productStatus.textContent=info.message;
+
+  const addButton=document.getElementById("productAddToCart");
+
+  function selectedPhoto(){
+    return window.shokherGetSelectedGalleryImage?.()||{
+      src:`../${p.folder}/main.jpg`,
+      label:"Main",
+      absoluteUrl:new URL(`../${p.folder}/main.jpg`,window.location.href).href
+    };
+  }
+
+  function updateWhatsApp(){
+    if(!info.orderAllowed)return;
+    const photo=selectedPhoto();
+    const base=window.buildWhatsAppOrderUrl(p);
+
+    try{
+      const url=new URL(base);
+      const existing=url.searchParams.get("text")||"";
+      const label=photo.label==="Main"?"Main product photo":`Selected photo: ${photo.label}`;
+      const imageUrl=photo.absoluteUrl||new URL(photo.src,window.location.href).href;
+
+      url.searchParams.set("text",`${existing}
+
+${label}
+Selected image:
+${imageUrl}`);
+
+      productWhatsApp.href=url.toString();
+    }catch(e){
+      productWhatsApp.href=base;
+    }
+  }
+
+  if(info.orderAllowed){
+    addButton.hidden=false;
+    addButton.addEventListener("click",()=>window.shokherAddToCart(p,1,selectedPhoto()));
+    updateWhatsApp();
+  }else{
+    productWhatsApp.hidden=true;
+  }
+
+  document.addEventListener("shokher:gallery-change",updateWhatsApp);
+
+  if(window.shokherRenderSimpleGallery){
+    await window.shokherRenderSimpleGallery(p);
+    updateWhatsApp();
+  }
 });
 </script><style>.sa-product-detail{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:48px;align-items:start}.sa-detail-price{font-size:1.35rem;font-weight:700;margin:18px 0}.sa-detail-status{font-weight:700;margin:18px 0}@media(max-width:800px){.sa-product-detail{grid-template-columns:1fr}}</style></body></html>
