@@ -13,7 +13,10 @@
   >
     Shop <span class="chevron">⌄</span>
   </button><div class="dropdown-menu"><a href="bags.html">Bags</a><a href="jewelry.html">Jewelry</a><a href="sarees.html">Sarees</a><a href="clothing.html">Clothing</a><a href="handpicked-finds.html">Handpicked Finds</a></div></div><a href="../index.html#new-arrivals">New Arrivals</a><a href="../index.html#best-sellers">Best Sellers</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav></div></header>
-<main><section class="category-products"><div class="section-shell"><div id="productNotFound" class="empty-product-message" hidden>This product is no longer available.</div><div id="productPageContent" class="sa-product-detail"><div id="productGallery"></div><div class="product-detail-copy"><p class="eyebrow" id="productCategory"></p><h1 id="productName"></h1><p id="productPrice" class="sa-detail-price"></p><p id="productDescription"></p><p id="productStatus" class="sa-detail-status"></p><a id="productWhatsApp" class="product-order-link" target="_blank" rel="noopener">Order via WhatsApp →</a></div></div></div></section></main>
+<main><section class="category-products"><div class="section-shell"><div id="productNotFound" class="empty-product-message" hidden>This product is no longer available.</div><div id="productPageContent" class="sa-product-detail"><div id="productGallery"></div><div class="product-detail-copy"><p class="eyebrow" id="productCategory"></p><h1 id="productName"></h1><p id="productPrice" class="sa-detail-price"></p><p id="productDescription"></p><p id="productStatus" class="sa-detail-status"></p><div class="product-purchase-actions">
+<button id="productAddToCart" class="sa-add-cart-button" type="button" hidden>Add to Cart</button>
+<a id="productWhatsApp" class="product-order-link" target="_blank" rel="noopener">Order via WhatsApp →</a>
+</div></div></div></div></section></main>
 <script src="../data/config.js"></script><script src="../data/products.js"></script><script src="../script.js"></script><script src="../data/simple-gallery.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded",async()=>{
@@ -25,7 +28,12 @@ document.addEventListener("DOMContentLoaded",async()=>{
  if(!info.visible){content.hidden=true;nf.hidden=false;return}
  document.title=p.name+" | Shokher Alna";
  productName.textContent=p.name;productCategory.textContent=(p.category||"").replaceAll("-"," ");productPrice.textContent=p.price?"$"+p.price:"Contact for price";productDescription.textContent=p.description||"";productStatus.textContent=info.message;
- if(info.orderAllowed){productWhatsApp.href=window.buildWhatsAppOrderUrl(p)}else{productWhatsApp.hidden=true}
+ if(info.orderAllowed){
+ productWhatsApp.href=window.buildWhatsAppOrderUrl(p);
+ const addButton=document.getElementById("productAddToCart");
+ addButton.hidden=false;
+ addButton.addEventListener("click",()=>window.shokherAddToCart(p,1));
+}else{productWhatsApp.hidden=true}
  if(window.shokherRenderSimpleGallery)await window.shokherRenderSimpleGallery(p);
 });
 </script><style>.sa-product-detail{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:48px;align-items:start}.sa-detail-price{font-size:1.35rem;font-weight:700;margin:18px 0}.sa-detail-status{font-weight:700;margin:18px 0}@media(max-width:800px){.sa-product-detail{grid-template-columns:1fr}}</style></body></html>
