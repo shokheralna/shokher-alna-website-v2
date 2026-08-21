@@ -97,15 +97,27 @@ document.addEventListener("DOMContentLoaded",()=>{
 
   targets.forEach(build);
 });
-\n/* ===== Shokher Alna Stage 1 Shopping Cart ===== */\nwindow.SHOKHER_ALNA_CART_KEY="shokherAlnaCartV1";\nwindow.shokherReadCart=function(){try{const x=JSON.parse(localStorage.getItem(window.SHOKHER_ALNA_CART_KEY)||"[]");return Array.isArray(x)?x:[]}catch(e){return []}};\nwindow.shokherWriteCart=function(cart){localStorage.setItem(window.SHOKHER_ALNA_CART_KEY,JSON.stringify(cart));window.shokherRenderCart()};\nwindow.shokherAddToCart=function(product,quantity=1){if(!product||!product.id)return;const info=window.getShokherStatusInfo(product);if(!info.orderAllowed)return;const cart=window.shokherReadCart(),existing=cart.find(i=>String(i.id)===String(product.id));if(existing)existing.quantity+=quantity;else cart.push({id:product.id,name:product.name,price:Number(product.price)||0,category:product.category||"",folder:product.folder||"",quantity});window.shokherWriteCart(cart);window.shokherOpenCart();const n=document.getElementById("saCartNotice");if(n){n.textContent=product.name+" added to cart";n.classList.add("show");clearTimeout(window.__shokherCartNoticeTimer);window.__shokherCartNoticeTimer=setTimeout(()=>n.classList.remove("show"),2200)}};\nwindow.shokherChangeCartQuantity=function(id,change){const cart=window.shokherReadCart(),item=cart.find(x=>String(x.id)===String(id));if(!item)return;item.quantity+=change;window.shokherWriteCart(cart.filter(x=>x.quantity>0))};\nwindow.shokherRemoveFromCart=function(id){window.shokherWriteCart(window.shokherReadCart().filter(x=>String(x.id)!==String(id)))};\nwindow.shokherOpenCart=function(){const d=document.getElementById("saCartDrawer"),o=document.getElementById("saCartOverlay");if(!d||!o)return;d.classList.add("open");o.classList.add("open");d.setAttribute("aria-hidden","false");document.body.classList.add("sa-cart-open")};\nwindow.shokherCloseCart=function(){const d=document.getElementById("saCartDrawer"),o=document.getElementById("saCartOverlay");if(!d||!o)return;d.classList.remove("open");o.classList.remove("open");d.setAttribute("aria-hidden","true");document.body.classList.remove("sa-cart-open")};\nwindow.shokherRenderCart=function(){const cart=window.shokherReadCart(),count=cart.reduce((s,i)=>s+i.quantity,0),subtotal=cart.reduce((s,i)=>s+(Number(i.price)||0)*i.quantity,0);document.querySelectorAll(".sa-cart-count").forEach(el=>{el.textContent=count;el.hidden=count===0});const items=document.getElementById("saCartItems"),empty=document.getElementById("saCartEmpty"),sub=document.getElementById("saCartSubtotal");if(!items||!empty||!sub)return;items.replaceChildren();empty.hidden=cart.length>0;cart.forEach(item=>{const row=document.createElement("div");row.className="sa-cart-item";const prefix=location.pathname.includes("/pages/")?"../":"",src=item.folder?prefix+item.folder+"/main.jpg":"";row.innerHTML=`<div class="sa-cart-item-image">${src?`<img src="${src}" alt="${item.name}">`:""}</div><div class="sa-cart-item-copy"><strong>${item.name}</strong><span>$${Number(item.price).toFixed(2)}</span><div class="sa-cart-qty"><button type="button" data-cart-minus="${item.id}">−</button><span>${item.quantity}</span><button type="button" data-cart-plus="${item.id}">+</button></div><button class="sa-cart-remove" type="button" data-cart-remove="${item.id}">Remove</button></div>`;items.appendChild(row)});sub.textContent="$"+subtotal.toFixed(2)};\ndocument.addEventListener("DOMContentLoaded",()=>{const h=document.querySelector(".nav-container");if(h&&!document.getElementById("saCartButton")){const b=document.createElement("button");b.id="saCartButton";b.className="sa-cart-button";b.type="button";b.innerHTML='Cart <span class="sa-cart-count" hidden>0</span>';h.appendChild(b)}if(!document.getElementById("saCartDrawer"))document.body.insertAdjacentHTML("beforeend",`<div class="sa-cart-overlay" id="saCartOverlay"></div><aside class="sa-cart-drawer" id="saCartDrawer" aria-hidden="true"><div class="sa-cart-header"><div><p class="eyebrow">Your selection</p><h2>Shopping Cart</h2></div><button class="sa-cart-close" id="saCartClose" type="button">&times;</button></div><div class="sa-cart-body"><p class="sa-cart-empty" id="saCartEmpty">Your cart is empty.</p><div id="saCartItems"></div></div><div class="sa-cart-footer"><div class="sa-cart-subtotal-row"><span>Subtotal</span><strong id="saCartSubtotal">$0.00</strong></div><p>Checkout will be added in the next stage.</p></div></aside><div class="sa-cart-notice" id="saCartNotice"></div>`);document.getElementById("saCartButton")?.addEventListener("click",window.shokherOpenCart);document.getElementById("saCartClose")?.addEventListener("click",window.shokherCloseCart);document.getElementById("saCartOverlay")?.addEventListener("click",window.shokherCloseCart);document.getElementById("saCartItems")?.addEventListener("click",e=>{const m=e.target.closest("[data-cart-minus]"),p=e.target.closest("[data-cart-plus]"),r=e.target.closest("[data-cart-remove]");if(m)window.shokherChangeCartQuantity(m.dataset.cartMinus,-1);if(p)window.shokherChangeCartQuantity(p.dataset.cartPlus,1);if(r)window.shokherRemoveFromCart(r.dataset.cartRemove)});document.addEventListener("keydown",e=>{if(e.key==="Escape")window.shokherCloseCart()});window.shokherRenderCart()});\n
 
-/* ===== Selected-photo-aware cart ===== */
+window.SHOKHER_ALNA_CART_KEY="shokherAlnaCartV2";
+
+window.shokherReadCart=function(){
+  try{
+    const data=JSON.parse(localStorage.getItem(window.SHOKHER_ALNA_CART_KEY)||"[]");
+    return Array.isArray(data)?data:[];
+  }catch(e){return[];}
+};
+
+window.shokherWriteCart=function(cart){
+  localStorage.setItem(window.SHOKHER_ALNA_CART_KEY,JSON.stringify(cart));
+  window.shokherRenderCart();
+};
+
 window.shokherAbsoluteImageUrl=function(src){
   try{return new URL(src,window.location.href).href}catch(e){return src||""}
 };
 
-window.shokherCartItemKey=function(productId,selectedImage){
-  return `${productId}::${selectedImage||"main"}`;
+window.shokherCartItemKey=function(productId,imageSrc){
+  return `${productId}::${imageSrc||"main"}`;
 };
 
 window.shokherAddToCart=function(product,quantity=1,selectedPhoto=null){
@@ -113,43 +125,37 @@ window.shokherAddToCart=function(product,quantity=1,selectedPhoto=null){
   const info=window.getShokherStatusInfo(product);
   if(!info.orderAllowed)return;
 
-  const chosen=selectedPhoto||window.shokherGetSelectedGalleryImage?.()||{
-    src:`${window.location.pathname.includes("/pages/")?"../":""}${product.folder}/main.jpg`,
-    label:"Main"
-  };
+  const prefix=window.location.pathname.includes("/pages/")?"../":"";
+  const fallback={src:`${prefix}${product.folder}/main.jpg`,label:"Main"};
+  const chosen=selectedPhoto||(window.shokherGetSelectedGalleryImage?window.shokherGetSelectedGalleryImage():null)||fallback;
 
-  const selectedImage=chosen?.src||"";
-  const selectedLabel=chosen?.label||"Main";
+  const selectedImage=chosen.src||fallback.src;
+  const selectedLabel=chosen.label||"Main";
   const key=window.shokherCartItemKey(product.id,selectedImage);
 
   const cart=window.shokherReadCart();
   const existing=cart.find(item=>item.key===key);
 
-  if(existing){
-    existing.quantity+=quantity;
-  }else{
-    cart.push({
-      key,
-      id:product.id,
-      name:product.name,
-      price:Number(product.price)||0,
-      category:product.category||"",
-      folder:product.folder||"",
-      selectedImage,
-      selectedImageUrl:window.shokherAbsoluteImageUrl(selectedImage),
-      selectedLabel,
-      quantity
-    });
-  }
+  if(existing)existing.quantity+=quantity;
+  else cart.push({
+    key,
+    id:product.id,
+    name:product.name,
+    price:Number(product.price)||0,
+    category:product.category||"",
+    folder:product.folder||"",
+    selectedImage,
+    selectedImageUrl:chosen.absoluteUrl||window.shokherAbsoluteImageUrl(selectedImage),
+    selectedLabel,
+    quantity
+  });
 
   window.shokherWriteCart(cart);
   window.shokherOpenCart();
 
   const notice=document.getElementById("saCartNotice");
   if(notice){
-    notice.textContent=selectedLabel==="Main"
-      ? `${product.name} added to cart`
-      : `${product.name} — Photo ${selectedLabel} added to cart`;
+    notice.textContent=selectedLabel==="Main"?`${product.name} added to cart`:`${product.name} — Photo ${selectedLabel} added to cart`;
     notice.classList.add("show");
     clearTimeout(window.__shokherCartNoticeTimer);
     window.__shokherCartNoticeTimer=setTimeout(()=>notice.classList.remove("show"),2200);
@@ -165,24 +171,36 @@ window.shokherChangeCartQuantity=function(key,change){
 };
 
 window.shokherRemoveFromCart=function(key){
-  window.shokherWriteCart(
-    window.shokherReadCart().filter(entry=>entry.key!==key)
-  );
+  window.shokherWriteCart(window.shokherReadCart().filter(entry=>entry.key!==key));
+};
+
+window.shokherOpenCart=function(){
+  const drawer=document.getElementById("saCartDrawer"),overlay=document.getElementById("saCartOverlay");
+  if(!drawer||!overlay)return;
+  drawer.classList.add("open");overlay.classList.add("open");
+  drawer.setAttribute("aria-hidden","false");
+  document.body.classList.add("sa-cart-open");
+};
+
+window.shokherCloseCart=function(){
+  const drawer=document.getElementById("saCartDrawer"),overlay=document.getElementById("saCartOverlay");
+  if(!drawer||!overlay)return;
+  drawer.classList.remove("open");overlay.classList.remove("open");
+  drawer.setAttribute("aria-hidden","true");
+  document.body.classList.remove("sa-cart-open");
 };
 
 window.shokherRenderCart=function(){
   const cart=window.shokherReadCart();
-  const count=cart.reduce((sum,item)=>sum+item.quantity,0);
-  const subtotal=cart.reduce((sum,item)=>sum+(Number(item.price)||0)*item.quantity,0);
+  const count=cart.reduce((s,i)=>s+i.quantity,0);
+  const subtotal=cart.reduce((s,i)=>s+(Number(i.price)||0)*i.quantity,0);
 
   document.querySelectorAll(".sa-cart-count").forEach(el=>{
     el.textContent=count;
     el.hidden=count===0;
   });
 
-  const items=document.getElementById("saCartItems");
-  const empty=document.getElementById("saCartEmpty");
-  const subtotalEl=document.getElementById("saCartSubtotal");
+  const items=document.getElementById("saCartItems"),empty=document.getElementById("saCartEmpty"),subtotalEl=document.getElementById("saCartSubtotal");
   if(!items||!empty||!subtotalEl)return;
 
   items.replaceChildren();
@@ -191,30 +209,16 @@ window.shokherRenderCart=function(){
   cart.forEach(item=>{
     const row=document.createElement("div");
     row.className="sa-cart-item";
-
     const prefix=window.location.pathname.includes("/pages/")?"../":"";
     const fallback=item.folder?`${prefix}${item.folder}/main.jpg`:"";
     const imageSrc=item.selectedImage||fallback;
     const key=item.key||window.shokherCartItemKey(item.id,item.selectedImage||"");
-    const selected=item.selectedLabel&&item.selectedLabel!=="Main"
-      ? `<small class="sa-cart-selected-photo">Selected photo: ${item.selectedLabel}</small>`
-      : "";
+    const selected=item.selectedLabel&&item.selectedLabel!=="Main"?`<small class="sa-cart-selected-photo">Selected photo: ${item.selectedLabel}</small>`:"";
 
-    row.innerHTML=`
-      <div class="sa-cart-item-image">
-        ${imageSrc?`<img src="${imageSrc}" alt="${item.name} selected product photo">`:""}
-      </div>
-      <div class="sa-cart-item-copy">
-        <strong>${item.name}</strong>
-        ${selected}
-        <span>$${Number(item.price).toFixed(2)}</span>
-        <div class="sa-cart-qty">
-          <button type="button" data-cart-minus="${encodeURIComponent(key)}">−</button>
-          <span>${item.quantity}</span>
-          <button type="button" data-cart-plus="${encodeURIComponent(key)}">+</button>
-        </div>
-        <button class="sa-cart-remove" type="button" data-cart-remove="${encodeURIComponent(key)}">Remove</button>
-      </div>`;
+    row.innerHTML=`<div class="sa-cart-item-image">${imageSrc?`<img src="${imageSrc}" alt="${item.name} selected product photo">`:""}</div>
+    <div class="sa-cart-item-copy"><strong>${item.name}</strong>${selected}<span>$${Number(item.price).toFixed(2)}</span>
+    <div class="sa-cart-qty"><button type="button" data-cart-minus="${encodeURIComponent(key)}">−</button><span>${item.quantity}</span><button type="button" data-cart-plus="${encodeURIComponent(key)}">+</button></div>
+    <button class="sa-cart-remove" type="button" data-cart-remove="${encodeURIComponent(key)}">Remove</button></div>`;
     items.appendChild(row);
   });
 
@@ -222,21 +226,41 @@ window.shokherRenderCart=function(){
 };
 
 document.addEventListener("DOMContentLoaded",()=>{
-  const items=document.getElementById("saCartItems");
-  if(!items)return;
+  const headerTarget=document.querySelector(".header-actions")||document.querySelector(".nav-container");
 
-  items.addEventListener("click",event=>{
+  if(headerTarget&&!document.getElementById("saCartButton")){
+    const button=document.createElement("button");
+    button.id="saCartButton";
+    button.className="sa-cart-button";
+    button.type="button";
+    button.innerHTML='Cart <span class="sa-cart-count" hidden>0</span>';
+    headerTarget.appendChild(button);
+  }
+
+  if(!document.getElementById("saCartDrawer")){
+    document.body.insertAdjacentHTML("beforeend",`
+      <div class="sa-cart-overlay" id="saCartOverlay"></div>
+      <aside class="sa-cart-drawer" id="saCartDrawer" aria-hidden="true">
+        <div class="sa-cart-header"><div><p class="eyebrow">Your selection</p><h2>Shopping Cart</h2></div><button class="sa-cart-close" id="saCartClose" type="button">&times;</button></div>
+        <div class="sa-cart-body"><p class="sa-cart-empty" id="saCartEmpty">Your cart is empty.</p><div id="saCartItems"></div></div>
+        <div class="sa-cart-footer"><div class="sa-cart-subtotal-row"><span>Subtotal</span><strong id="saCartSubtotal">$0.00</strong></div><p>Checkout will be added in the next stage.</p></div>
+      </aside>
+      <div class="sa-cart-notice" id="saCartNotice"></div>`);
+  }
+
+  document.getElementById("saCartButton")?.addEventListener("click",window.shokherOpenCart);
+  document.getElementById("saCartClose")?.addEventListener("click",window.shokherCloseCart);
+  document.getElementById("saCartOverlay")?.addEventListener("click",window.shokherCloseCart);
+
+  document.getElementById("saCartItems")?.addEventListener("click",event=>{
     const minus=event.target.closest("[data-cart-minus]");
     const plus=event.target.closest("[data-cart-plus]");
     const remove=event.target.closest("[data-cart-remove]");
-    if(!minus&&!plus&&!remove)return;
-
-    event.stopImmediatePropagation();
-
     if(minus)window.shokherChangeCartQuantity(decodeURIComponent(minus.dataset.cartMinus),-1);
     if(plus)window.shokherChangeCartQuantity(decodeURIComponent(plus.dataset.cartPlus),1);
     if(remove)window.shokherRemoveFromCart(decodeURIComponent(remove.dataset.cartRemove));
-  },true);
+  });
 
+  document.addEventListener("keydown",event=>{if(event.key==="Escape")window.shokherCloseCart();});
   window.shokherRenderCart();
 });
