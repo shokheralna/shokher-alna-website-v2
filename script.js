@@ -308,13 +308,24 @@ window.shokherNormalizeProductImageUrl = function(item) {
   }
 };
 
-window.shokherProductPageUrl = function(productId) {
+window.shokherProductPageUrl = function(productId, selectedLabel = "") {
   const prefix =
     window.location.pathname.includes("/pages/")
       ? ""
       : "pages/";
 
-  return `${prefix}product.html?id=${encodeURIComponent(productId)}`;
+  let url =
+    `${prefix}product.html?id=${encodeURIComponent(productId)}`;
+
+  if (
+    selectedLabel &&
+    selectedLabel !== "Main"
+  ) {
+    url +=
+      `&photo=${encodeURIComponent(selectedLabel)}`;
+  }
+
+  return url;
 };
 
 
@@ -374,7 +385,10 @@ window.shokherRenderCart = function() {
       window.shokherNormalizeProductImageUrl(item);
 
     const productUrl =
-      window.shokherProductPageUrl(item.id);
+      window.shokherProductPageUrl(
+        item.id,
+        item.selectedLabel || ""
+      );
 
     const itemKey =
       item.key ||
