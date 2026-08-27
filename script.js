@@ -264,3 +264,312 @@ document.addEventListener("DOMContentLoaded",()=>{
   document.addEventListener("keydown",event=>{if(event.key==="Escape")window.shokherCloseCart();});
   window.shokherRenderCart();
 });
+
+/* ============================================================
+   SHOKHER ALNA V2 — CART IMAGE + PRODUCT LINK FIX
+   Append this block to the VERY BOTTOM of the current script.js
+   ============================================================ */
+
+window.shokherRepoRootUrl = function() {
+  return window.location.pathname.includes("/pages/")
+    ? new URL("../", window.location.href)
+    : new URL("./", window.location.href);
+};
+
+window.shokherNormalizeProductImageUrl = function(item) {
+  // Newer cart entries already store the absolute selected-photo URL.
+  if (item.selectedImageUrl) {
+    return item.selectedImageUrl;
+  }
+
+  let source =
+    item.selectedImage ||
+    (item.folder ? `${item.folder}/main.jpg` : "");
+
+  if (!source) return "";
+
+  if (/^https?:\/\//i.test(source)) {
+    return source;
+  }
+
+  // A photo selected on product.html may have been stored as ../assets/...
+  // Strip page-relative prefixes and rebuild it from the repository root.
+  source = source
+    .replace(/^(\.\.\/)+/, "")
+    .replace(/^\.\/+/, "");
+
+  try {
+    return new URL(
+      source,
+      window.shokherRepoRootUrl()
+    ).href;
+  } catch (error) {
+    return source;
+  }
+};
+
+window.shokherProductPageUrl = function(productId) {
+  const prefix =
+    window.location.pathname.includes("/pages/")
+      ? ""
+      : "pages/";
+
+  return `${prefix}product.html?id=${encodeURIComponent(productId)}`;
+};
+
+
+/* ------------------------------------------------------------
+   Override cart rendering
+   - Fix selected-photo image across homepage/product pages
+   - Make cart image + product name clickable
+   ------------------------------------------------------------ */
+
+window.shokherRenderCart = function() {
+  const cart = window.shokherReadCart();
+
+  const count = cart.reduce(
+    (sum, item) => sum + Number(item.quantity || 0),
+    0
+  );
+
+  const subtotal = cart.reduce(
+    (sum, item) =>
+      sum +
+      (Number(item.price) || 0) *
+        Number(item.quantity || 0),
+    0
+  );
+
+  document
+    .querySelectorAll(".sa-cart-count")
+    .forEach(element => {
+      element.textContent = count;
+      element.hidden = count === 0;
+    });
+
+  const items =
+    document.getElementById("saCartItems");
+
+  const empty =
+    document.getElementById("saCartEmpty");
+
+  const subtotalElement =
+    document.getElementById("saCartSubtotal");
+
+  if (!items || !empty || !subtotalElement) {
+    return;
+  }
+
+  items.replaceChildren();
+
+  empty.hidden = cart.length > 0;
+
+  cart.forEach(item => {
+    const row =
+      document.createElement("div");
+
+    row.className = "sa-cart-item";
+
+    const imageUrl =
+      window.shokherNormalizeProductImageUrl(item);
+
+    const productUrl =
+      window.shokherProductPageUrl(item.id);
+
+    const itemKey =
+      item.key ||
+      (
+        window.shokherCartItemKey
+          ? window.shokherCartItemKey(
+              item.id,
+              item.selectedImage || ""
+            )
+          : String(item.id)
+      );
+
+    const selectedPhoto =
+      item.selectedLabel &&
+      item.selectedLabel !== "Main"
+        ? `<small class="sa-cart-selected-photo">
+             Selected photo: ${item.selectedLabel}
+           </small>`
+        : "";
+
+    row.innerHTML = `
+      <a
+        class="sa-cart-item-image sa-cart-product-link"
+        href="${productUrl}"
+        aria-label="View ${item.name}"
+      >
+        ${
+          imageUrl
+            ? `<img
+                 src="${imageUrl}"
+                 alt="${item.name} selected product photo"
+               >`
+            : ""
+        }
+      </a>
+
+      <div class="sa-cart-item-copy">
+
+        <a
+          class="sa-cart-item-name sa-cart-product-link"
+          href="${productUrl}"
+        >
+          <strong>${item.name}</strong>
+        </a>
+
+        ${selectedPhoto}
+
+        <span>
+          $${Number(item.price).toFixed(2)}
+        </span>
+
+        <div class="sa-cart-qty">
+          <button
+            type="button"
+            data-cart-minus="${encodeURIComponent(itemKey)}"
+            aria-label="Decrease quantity"
+          >
+            −
+          </button>
+
+          <span>${item.quantity}</span>
+
+          <button
+            type="button"
+            data-cart-plus="${encodeURIComponent(itemKey)}"
+            aria-label="Increase quantity"
+          >
+            +
+          </button>
+        </div>
+
+        <button
+          class="sa-cart-remove"
+          type="button"
+          data-cart-remove="${encodeURIComponent(itemKey)}"
+        >
+          Remove
+        </button>
+      </div>
+    `;
+
+    items.appendChild(row);
+  });
+
+  subtotalElement.textContent =
+    `$${subtotal.toFixed(2)}`;
+};
+
+
+/* ------------------------------------------------------------
+   Make homepage Best Seller / New Arrival cards clickable.
+   We deliberately do NOT wrap Add to Cart or WhatsApp controls.
+   ------------------------------------------------------------ */
+
+window.shokherMakeHomepageProductCardsClickable = function() {
+  const products =
+    window.SHOKHER_ALNA_PRODUCTS || [];
+
+  document
+    .querySelectorAll(".product-card")
+    .forEach(card => {
+      if (card.dataset.productLinksReady === "true") {
+        return;
+      }
+
+      const heading =
+        card.querySelector("h3");
+
+      if (!heading) return;
+
+      const product =
+        products.find(
+          item =>
+            String(item.name).trim() ===
+            String(heading.textContent).trim()
+        );
+
+      if (!product) return;
+
+      const productUrl =
+        window.shokherProductPageUrl(product.id);
+
+      const imageContainer =
+        card.querySelector(".product-image");
+
+      if (
+        imageContainer &&
+        !imageContainer.closest(
+          ".sa-product-card-link"
+        )
+      ) {
+        const imageLink =
+          document.createElement("a");
+
+        imageLink.className =
+          "sa-product-card-link";
+
+        imageLink.href =
+          productUrl;
+
+        imageLink.setAttribute(
+          "aria-label",
+          `View ${product.name}`
+        );
+
+        imageContainer.parentNode.insertBefore(
+          imageLink,
+          imageContainer
+        );
+
+        imageLink.appendChild(
+          imageContainer
+        );
+      }
+
+      if (
+        heading &&
+        !heading.closest(
+          ".sa-product-title-link"
+        )
+      ) {
+        const titleLink =
+          document.createElement("a");
+
+        titleLink.className =
+          "sa-product-title-link";
+
+        titleLink.href =
+          productUrl;
+
+        heading.parentNode.insertBefore(
+          titleLink,
+          heading
+        );
+
+        titleLink.appendChild(
+          heading
+        );
+      }
+
+      card.dataset.productLinksReady =
+        "true";
+    });
+};
+
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+    // Earlier homepage render listeners execute first,
+    // then this makes the generated cards clickable.
+    window.shokherMakeHomepageProductCardsClickable();
+
+    // Re-render an existing saved cart using fixed image paths.
+    window.shokherRenderCart();
+  }
+);
+
