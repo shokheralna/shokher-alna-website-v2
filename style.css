@@ -1366,3 +1366,5 @@
 .sa-cart-item-image {
   cursor: pointer;
 }
+
+.sa-cart-checkout-button{display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;margin-top:16px;border-radius:999px;color:#fff;background:#3f5340;font-weight:700;text-decoration:none}.sa-cart-checkout-button:hover{transform:translateY(-1px)}
