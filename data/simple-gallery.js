@@ -76,5 +76,25 @@ window.shokherRenderSimpleGallery=async function(product){
     if(d<-50)showPrev();
   },{passive:true});
 
-  select(0);
+const requestedPhoto =
+  new URLSearchParams(
+    window.location.search
+  ).get("photo");
+
+let initialIndex = 0;
+
+if (requestedPhoto) {
+  const matchIndex =
+    images.findIndex(
+      image =>
+        String(image.label).toLowerCase() ===
+        String(requestedPhoto).toLowerCase()
+    );
+
+  if (matchIndex >= 0) {
+    initialIndex = matchIndex;
+  }
+}
+
+select(initialIndex);
 };
