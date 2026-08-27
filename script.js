@@ -587,3 +587,15 @@ document.addEventListener(
   }
 );
 
+/* PHASE 2 — add Checkout button to cart */
+document.addEventListener("DOMContentLoaded",()=>{
+  const footer=document.querySelector(".sa-cart-footer");
+  if(!footer||document.getElementById("saCartCheckoutButton"))return;
+  const a=document.createElement("a");
+  a.id="saCartCheckoutButton";
+  a.className="sa-cart-checkout-button";
+  a.href=window.location.pathname.includes("/pages/")?"checkout.html":"pages/checkout.html";
+  a.textContent="Checkout";
+  footer.appendChild(a);
+});
+
