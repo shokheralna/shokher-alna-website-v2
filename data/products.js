@@ -192,11 +192,11 @@ window.SHOKHER_ALNA_PRODUCTS = [
     "folder": "assets/products/bags/B006-Patchwork-Hut",
     "price": "70",
     "status": "active",
-    "featured": false,
+    "featured": true,
     "bestSeller": true,
     "newArrival": false,
-    "orderEnabled": false,
-    "description": "Product details will be added later."
+    "orderEnabled": true,
+    "description": "Leather Bag with Ajrak patchwork."
   },
   {
     "id": "B007",
