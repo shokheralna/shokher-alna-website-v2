@@ -1,87 +1,824 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Product | Shokher Alna</title><link rel="stylesheet" href="../style.css"></head><body>
-<div class="announcement-bar"><div class="announcement-inner"><span>Free shipping on orders over $100</span><span>•</span><span>Free local pickup in Jackson Heights</span></div></div>
-<header class="site-header" id="siteHeader"><div class="nav-container"><a class="brand" href="../index.html">
- <img
-  class="brand-logo"
-  src="../assets/logo/logo.png"
-  alt="Shokher Alna logo"></span><span class="brand-copy"><strong>Shokher Alna</strong><small>Traditional &amp; Elegant Fashion</small></span></a><nav class="desktop-nav"><a href="../index.html">Home</a><div class="nav-dropdown open-on-hover">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Product | Shokher Alna</title>
+<link rel="stylesheet" href="../style.css">
 
-  <button
-    class="nav-link dropdown-trigger active"
-    type="button"
-    aria-expanded="false"
-  >
-    Shop <span class="chevron">⌄</span>
-  </button><div class="dropdown-menu"><a href="bags.html">Bags</a><a href="jewelry.html">Jewelry</a><a href="sarees.html">Sarees</a><a href="clothing.html">Clothing</a><a href="handpicked-finds.html">Handpicked Finds</a></div></div><a href="../index.html#new-arrivals">New Arrivals</a><a href="../index.html#best-sellers">Best Sellers</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav></div></header>
-<main><section class="category-products"><div class="section-shell"><div id="productNotFound" class="empty-product-message" hidden>This product is no longer available.</div><div id="productPageContent" class="sa-product-detail"><div id="productGallery"></div><div class="product-detail-copy"><p class="eyebrow" id="productCategory"></p><h1 id="productName"></h1><p id="productPrice" class="sa-detail-price"></p><p id="productDescription"></p><p id="productStatus" class="sa-detail-status"></p><div class="product-purchase-actions">
-<button id="productAddToCart" class="sa-add-cart-button" type="button" hidden>Add to Cart</button>
-<a id="productWhatsApp" class="product-order-link" target="_blank" rel="noopener">Order via WhatsApp →</a>
-</div></div></div></div></section></main>
-<script src="../data/config.js"></script><script src="../data/products.js"></script><script src="../script.js"></script><script src="../data/simple-gallery.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded",async()=>{
-  const id=new URLSearchParams(window.location.search).get("id");
-  const p=(window.SHOKHER_ALNA_PRODUCTS||[]).find(x=>String(x.id).toLowerCase()===String(id||"").toLowerCase());
-  const content=document.getElementById("productPageContent"),nf=document.getElementById("productNotFound");
+<style>
+/* =========================================================
+   SHOKHER ALNA — PRODUCT CATALOG SIDE NAVIGATION
+   ========================================================= */
 
-  if(!p){content.hidden=true;nf.hidden=false;return;}
+.sa-product-page-layout{
+  display:grid;
+  grid-template-columns:250px minmax(0,1fr);
+  gap:34px;
+  align-items:start;
+}
 
-  const info=window.getShokherStatusInfo(p);
-  if(!info.visible){content.hidden=true;nf.hidden=false;return;}
+.sa-catalog-sidebar{
+  position:sticky;
+  top:110px;
+  border:1px solid rgba(70,88,63,.16);
+  border-radius:18px;
+  background:#fbf8f1;
+  padding:18px 14px;
+  max-height:calc(100vh - 135px);
+  overflow:auto;
+}
 
-  document.title=p.name+" | Shokher Alna";
-  productName.textContent=p.name;
-  productCategory.textContent=(p.category||"").replaceAll("-"," ");
-  productPrice.textContent=p.price?"$"+p.price:"Contact for price";
-  productDescription.textContent=p.description||"";
-  productStatus.textContent=info.message;
+.sa-catalog-title{
+  margin:0 4px 14px;
+  font-size:.78rem;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:#687662;
+  font-weight:700;
+}
 
-  const addButton=document.getElementById("productAddToCart");
+.sa-catalog-group{
+  border-top:1px solid rgba(70,88,63,.11);
+}
 
-  function selectedPhoto(){
-    return window.shokherGetSelectedGalleryImage?.()||{
-      src:`../${p.folder}/main.jpg`,
-      label:"Main",
-      absoluteUrl:new URL(`../${p.folder}/main.jpg`,window.location.href).href
-    };
+.sa-catalog-group:first-of-type{
+  border-top:0;
+}
+
+.sa-catalog-group-button{
+  width:100%;
+  appearance:none;
+  border:0;
+  background:transparent;
+  padding:12px 5px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  cursor:pointer;
+  color:#33271f;
+  font:inherit;
+  font-weight:700;
+  text-align:left;
+}
+
+.sa-catalog-arrow{
+  transition:transform .18s ease;
+  font-size:.8rem;
+}
+
+.sa-catalog-group.is-open .sa-catalog-arrow{
+  transform:rotate(90deg);
+}
+
+.sa-catalog-list{
+  display:none;
+  padding:0 0 10px 7px;
+}
+
+.sa-catalog-group.is-open .sa-catalog-list{
+  display:block;
+}
+
+.sa-catalog-product{
+  display:block;
+  text-decoration:none;
+  color:#5a514a;
+  border-left:2px solid transparent;
+  padding:8px 9px;
+  margin:1px 0;
+  border-radius:0 9px 9px 0;
+  font-size:.9rem;
+  line-height:1.25;
+  transition:background .15s ease,color .15s ease,border-color .15s ease;
+}
+
+.sa-catalog-product:hover{
+  background:#f0eadf;
+  color:#283d2c;
+}
+
+.sa-catalog-product.is-current{
+  background:#e7ede2;
+  color:#29412f;
+  border-left-color:#486249;
+  font-weight:700;
+}
+
+.sa-mobile-product-nav{
+  display:none;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:0 0 20px;
+}
+
+.sa-back-category,
+.sa-browse-products-btn{
+  border:1px solid rgba(60,80,59,.25);
+  background:#fbf8f1;
+  color:#344936;
+  border-radius:999px;
+  padding:10px 14px;
+  text-decoration:none;
+  font:inherit;
+  font-weight:700;
+  cursor:pointer;
+  font-size:.9rem;
+}
+
+.sa-browse-products-btn{
+  background:#405c43;
+  color:#fff;
+}
+
+.sa-drawer-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(30,27,24,.38);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s ease;
+  z-index:998;
+}
+
+.sa-product-drawer{
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  width:min(86vw,340px);
+  background:#fbf8f1;
+  z-index:999;
+  transform:translateX(-102%);
+  transition:transform .24s ease;
+  box-shadow:10px 0 35px rgba(0,0,0,.12);
+  overflow:auto;
+  padding:18px 14px 30px;
+}
+
+body.sa-drawer-open{
+  overflow:hidden;
+}
+
+body.sa-drawer-open .sa-drawer-backdrop{
+  opacity:1;
+  pointer-events:auto;
+}
+
+body.sa-drawer-open .sa-product-drawer{
+  transform:translateX(0);
+}
+
+.sa-drawer-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:2px 4px 10px;
+}
+
+.sa-drawer-header strong{
+  font-size:1.08rem;
+}
+
+.sa-drawer-close{
+  border:0;
+  background:transparent;
+  font-size:1.7rem;
+  line-height:1;
+  cursor:pointer;
+  color:#443a32;
+}
+
+.sa-product-detail{
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);
+  gap:48px;
+  align-items:start;
+}
+
+.sa-detail-price{
+  font-size:1.35rem;
+  font-weight:700;
+  margin:18px 0;
+}
+
+.sa-detail-status{
+  font-weight:700;
+  margin:18px 0;
+}
+
+@media(max-width:1000px){
+  .sa-product-page-layout{
+    grid-template-columns:210px minmax(0,1fr);
+    gap:24px;
   }
 
-  function updateWhatsApp(){
-    if(!info.orderAllowed)return;
-    const photo=selectedPhoto();
-    const base=window.buildWhatsAppOrderUrl(p);
+  .sa-product-detail{
+    grid-template-columns:1fr;
+    gap:28px;
+  }
+}
 
-    try{
-      const url=new URL(base);
-      const existing=url.searchParams.get("text")||"";
-      const label=photo.label==="Main"?"Main product photo":`Selected photo: ${photo.label}`;
-      const imageUrl=photo.absoluteUrl||new URL(photo.src,window.location.href).href;
+@media(max-width:760px){
+  .sa-product-page-layout{
+    display:block;
+  }
 
-      url.searchParams.set("text",`${existing}
+  .sa-catalog-sidebar{
+    display:none;
+  }
+
+  .sa-mobile-product-nav{
+    display:flex;
+  }
+
+  .sa-product-detail{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="announcement-bar">
+  <div class="announcement-inner">
+    <span>Free shipping on orders over $100</span>
+    <span>•</span>
+    <span>Free local pickup in Jackson Heights</span>
+  </div>
+</div>
+
+<header class="site-header" id="siteHeader">
+  <div class="nav-container">
+    <a class="brand" href="../index.html">
+      <img
+        class="brand-logo"
+        src="../assets/logo/logo.png"
+        alt="Shokher Alna logo">
+      <span class="brand-copy">
+        <strong>Shokher Alna</strong>
+        <small>Traditional &amp; Elegant Fashion</small>
+      </span>
+    </a>
+
+    <nav class="desktop-nav">
+      <a href="../index.html">Home</a>
+
+      <div class="nav-dropdown open-on-hover">
+        <button
+          class="nav-link dropdown-trigger active"
+          type="button"
+          aria-expanded="false">
+          Shop <span class="chevron">⌄</span>
+        </button>
+
+        <div class="dropdown-menu">
+          <a href="bags.html">Bags</a>
+          <a href="jewelry.html">Jewelry</a>
+          <a href="sarees.html">Sarees</a>
+          <a href="clothing.html">Clothing</a>
+          <a href="handpicked-finds.html">Handpicked Finds</a>
+        </div>
+      </div>
+
+      <a href="../index.html#new-arrivals">New Arrivals</a>
+      <a href="../index.html#best-sellers">Best Sellers</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<div id="catalogDrawerBackdrop" class="sa-drawer-backdrop"></div>
+
+<aside
+  id="catalogDrawer"
+  class="sa-product-drawer"
+  aria-hidden="true">
+  <div class="sa-drawer-header">
+    <strong>Browse Products</strong>
+    <button
+      id="catalogDrawerClose"
+      class="sa-drawer-close"
+      type="button"
+      aria-label="Close product browser">×</button>
+  </div>
+  <div id="mobileCatalogTree"></div>
+</aside>
+
+<main>
+  <section class="category-products">
+    <div class="section-shell">
+
+      <div
+        id="productNotFound"
+        class="empty-product-message"
+        hidden>
+        This product is no longer available.
+      </div>
+
+      <div
+        id="productPageLayout"
+        class="sa-product-page-layout"
+        hidden>
+
+        <aside class="sa-catalog-sidebar">
+          <p class="sa-catalog-title">Browse the Shop</p>
+          <div id="desktopCatalogTree"></div>
+        </aside>
+
+        <div>
+          <div class="sa-mobile-product-nav">
+            <a
+              id="backToCategory"
+              class="sa-back-category"
+              href="bags.html">← Bags</a>
+
+            <button
+              id="openCatalogDrawer"
+              class="sa-browse-products-btn"
+              type="button">
+              ☰ Browse Products
+            </button>
+          </div>
+
+          <div
+            id="productPageContent"
+            class="sa-product-detail">
+
+            <div id="productGallery"></div>
+
+            <div class="product-detail-copy">
+              <p
+                class="eyebrow"
+                id="productCategory"></p>
+
+              <h1 id="productName"></h1>
+
+              <p
+                id="productPrice"
+                class="sa-detail-price"></p>
+
+              <p id="productDescription"></p>
+
+              <p
+                id="productStatus"
+                class="sa-detail-status"></p>
+
+              <div class="product-purchase-actions">
+                <button
+                  id="productAddToCart"
+                  class="sa-add-cart-button"
+                  type="button"
+                  hidden>
+                  Add to Cart
+                </button>
+
+                <a
+                  id="productWhatsApp"
+                  class="product-order-link"
+                  target="_blank"
+                  rel="noopener">
+                  Order via WhatsApp →
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="../data/config.js"></script>
+<script src="../data/products.js"></script>
+<script src="../script.js"></script>
+<script src="../data/simple-gallery.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+
+  const CATEGORY_INFO = {
+    bags: {
+      label: "Bags",
+      page: "bags.html"
+    },
+    jewelry: {
+      label: "Jewelry",
+      page: "jewelry.html"
+    },
+    sarees: {
+      label: "Sarees",
+      page: "sarees.html"
+    },
+    clothing: {
+      label: "Clothing",
+      page: "clothing.html"
+    },
+    "handpicked-finds": {
+      label: "Handpicked Finds",
+      page: "handpicked-finds.html"
+    }
+  };
+
+  const categoryOrder = [
+    "bags",
+    "jewelry",
+    "sarees",
+    "clothing",
+    "handpicked-finds"
+  ];
+
+  const id =
+    new URLSearchParams(window.location.search).get("id");
+
+  const allProducts =
+    window.SHOKHER_ALNA_PRODUCTS || [];
+
+  const p =
+    allProducts.find(
+      x =>
+        String(x.id).toLowerCase() ===
+        String(id || "").toLowerCase()
+    );
+
+  const layout =
+    document.getElementById("productPageLayout");
+
+  const content =
+    document.getElementById("productPageContent");
+
+  const nf =
+    document.getElementById("productNotFound");
+
+  if (!p) {
+    layout.hidden = true;
+    nf.hidden = false;
+    return;
+  }
+
+  const info =
+    window.getShokherStatusInfo(p);
+
+  if (!info.visible) {
+    layout.hidden = true;
+    nf.hidden = false;
+    return;
+  }
+
+  layout.hidden = false;
+
+  /* ---------------------------------------------------------
+     PRODUCT DETAILS
+     --------------------------------------------------------- */
+
+  document.title =
+    p.name + " | Shokher Alna";
+
+  productName.textContent =
+    p.name;
+
+  productCategory.textContent =
+    CATEGORY_INFO[p.category]?.label ||
+    (p.category || "").replaceAll("-", " ");
+
+  productPrice.textContent =
+    p.price
+      ? "$" + p.price
+      : "Contact for price";
+
+  productDescription.textContent =
+    p.description || "";
+
+  productStatus.textContent =
+    info.message;
+
+  const categoryInfo =
+    CATEGORY_INFO[p.category];
+
+  const backLink =
+    document.getElementById("backToCategory");
+
+  if (categoryInfo) {
+    backLink.href =
+      categoryInfo.page;
+
+    backLink.textContent =
+      "← " + categoryInfo.label;
+  }
+
+  /* ---------------------------------------------------------
+     CATALOG TREE
+     --------------------------------------------------------- */
+
+  function visibleProductsForCategory(category) {
+    return allProducts
+      .filter(product => {
+        if (product.category !== category) {
+          return false;
+        }
+
+        try {
+          return window
+            .getShokherStatusInfo(product)
+            .visible;
+        } catch (e) {
+          return (
+            product.status === "active" ||
+            product.status === "out-of-stock"
+          );
+        }
+      })
+      .sort((a, b) =>
+        String(a.name).localeCompare(
+          String(b.name)
+        )
+      );
+  }
+
+  function buildCatalogTree(target) {
+    target.replaceChildren();
+
+    categoryOrder.forEach(category => {
+
+      const products =
+        visibleProductsForCategory(category);
+
+      if (!products.length) {
+        return;
+      }
+
+      const group =
+        document.createElement("div");
+
+      group.className =
+        "sa-catalog-group";
+
+      if (category === p.category) {
+        group.classList.add("is-open");
+      }
+
+      const button =
+        document.createElement("button");
+
+      button.type = "button";
+      button.className =
+        "sa-catalog-group-button";
+
+      button.innerHTML = `
+        <span>${CATEGORY_INFO[category].label}</span>
+        <span class="sa-catalog-arrow">›</span>
+      `;
+
+      const list =
+        document.createElement("div");
+
+      list.className =
+        "sa-catalog-list";
+
+      products.forEach(product => {
+
+        const link =
+          document.createElement("a");
+
+        link.className =
+          "sa-catalog-product";
+
+        link.href =
+          `product.html?id=${encodeURIComponent(product.id)}`;
+
+        link.textContent =
+          product.name;
+
+        if (
+          String(product.id).toLowerCase() ===
+          String(p.id).toLowerCase()
+        ) {
+          link.classList.add("is-current");
+          link.setAttribute(
+            "aria-current",
+            "page"
+          );
+        }
+
+        list.appendChild(link);
+      });
+
+      button.addEventListener(
+        "click",
+        () => {
+          group.classList.toggle("is-open");
+        }
+      );
+
+      group.appendChild(button);
+      group.appendChild(list);
+      target.appendChild(group);
+    });
+  }
+
+  buildCatalogTree(
+    document.getElementById(
+      "desktopCatalogTree"
+    )
+  );
+
+  buildCatalogTree(
+    document.getElementById(
+      "mobileCatalogTree"
+    )
+  );
+
+  /* ---------------------------------------------------------
+     MOBILE DRAWER
+     --------------------------------------------------------- */
+
+  const drawer =
+    document.getElementById(
+      "catalogDrawer"
+    );
+
+  const backdrop =
+    document.getElementById(
+      "catalogDrawerBackdrop"
+    );
+
+  const openDrawerButton =
+    document.getElementById(
+      "openCatalogDrawer"
+    );
+
+  const closeDrawerButton =
+    document.getElementById(
+      "catalogDrawerClose"
+    );
+
+  function openDrawer() {
+    document.body.classList.add(
+      "sa-drawer-open"
+    );
+
+    drawer.setAttribute(
+      "aria-hidden",
+      "false"
+    );
+  }
+
+  function closeDrawer() {
+    document.body.classList.remove(
+      "sa-drawer-open"
+    );
+
+    drawer.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+  }
+
+  openDrawerButton.addEventListener(
+    "click",
+    openDrawer
+  );
+
+  closeDrawerButton.addEventListener(
+    "click",
+    closeDrawer
+  );
+
+  backdrop.addEventListener(
+    "click",
+    closeDrawer
+  );
+
+  document.addEventListener(
+    "keydown",
+    e => {
+      if (e.key === "Escape") {
+        closeDrawer();
+      }
+    }
+  );
+
+  /* ---------------------------------------------------------
+     CART + WHATSAPP + GALLERY
+     Existing functionality preserved.
+     --------------------------------------------------------- */
+
+  const addButton =
+    document.getElementById(
+      "productAddToCart"
+    );
+
+  function selectedPhoto() {
+    return (
+      window
+        .shokherGetSelectedGalleryImage?.() ||
+      {
+        src:
+          `../${p.folder}/main.jpg`,
+        label:
+          "Main",
+        absoluteUrl:
+          new URL(
+            `../${p.folder}/main.jpg`,
+            window.location.href
+          ).href
+      }
+    );
+  }
+
+  function updateWhatsApp() {
+    if (!info.orderAllowed) {
+      return;
+    }
+
+    const photo =
+      selectedPhoto();
+
+    const base =
+      window.buildWhatsAppOrderUrl(p);
+
+    try {
+      const url =
+        new URL(base);
+
+      const existing =
+        url.searchParams.get("text") ||
+        "";
+
+      const label =
+        photo.label === "Main"
+          ? "Main product photo"
+          : `Selected photo: ${photo.label}`;
+
+      const imageUrl =
+        photo.absoluteUrl ||
+        new URL(
+          photo.src,
+          window.location.href
+        ).href;
+
+      url.searchParams.set(
+        "text",
+        `${existing}
 
 ${label}
 Selected image:
-${imageUrl}`);
+${imageUrl}`
+      );
 
-      productWhatsApp.href=url.toString();
-    }catch(e){
-      productWhatsApp.href=base;
+      productWhatsApp.href =
+        url.toString();
+
+    } catch (e) {
+      productWhatsApp.href =
+        base;
     }
   }
 
-  if(info.orderAllowed){
-    addButton.hidden=false;
-    addButton.addEventListener("click",()=>window.shokherAddToCart(p,1,selectedPhoto()));
+  if (info.orderAllowed) {
+    addButton.hidden =
+      false;
+
+    addButton.addEventListener(
+      "click",
+      () =>
+        window.shokherAddToCart(
+          p,
+          1,
+          selectedPhoto()
+        )
+    );
+
     updateWhatsApp();
-  }else{
-    productWhatsApp.hidden=true;
+
+  } else {
+    productWhatsApp.hidden =
+      true;
   }
 
-  document.addEventListener("shokher:gallery-change",updateWhatsApp);
+  document.addEventListener(
+    "shokher:gallery-change",
+    updateWhatsApp
+  );
 
-  if(window.shokherRenderSimpleGallery){
-    await window.shokherRenderSimpleGallery(p);
+  if (
+    window.shokherRenderSimpleGallery
+  ) {
+    await window
+      .shokherRenderSimpleGallery(p);
+
     updateWhatsApp();
   }
+
 });
-</script><style>.sa-product-detail{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:48px;align-items:start}.sa-detail-price{font-size:1.35rem;font-weight:700;margin:18px 0}.sa-detail-status{font-weight:700;margin:18px 0}@media(max-width:800px){.sa-product-detail{grid-template-columns:1fr}}</style></body></html>
+</script>
+
+</body>
+</html>
