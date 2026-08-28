@@ -285,6 +285,89 @@ body.sa-drawer-open .sa-product-drawer{
     pointer-events:none;
   }
 }
+
+/* =========================================================
+   MOBILE PRODUCT GALLERY COMPACTION
+   Keeps desktop unchanged.
+   ========================================================= */
+@media(max-width:760px){
+
+  /* Reduce empty vertical space above the gallery */
+  .category-products{
+    padding-top:22px !important;
+  }
+
+  .sa-mobile-product-nav{
+    margin-bottom:14px;
+  }
+
+  /* Main gallery container should not dominate the whole screen */
+  #productGallery .simple-gallery-main,
+  #productGallery .gallery-main,
+  #productGallery .product-gallery-main,
+  #productGallery [class*="gallery-main"]{
+    height:min(62vh,560px) !important;
+    min-height:0 !important;
+    max-height:560px !important;
+  }
+
+  /* Show the complete product image instead of cropping it */
+  #productGallery .simple-gallery-main img,
+  #productGallery .gallery-main img,
+  #productGallery .product-gallery-main img,
+  #productGallery [class*="gallery-main"] img{
+    width:100% !important;
+    height:100% !important;
+    max-height:560px !important;
+    object-fit:contain !important;
+    object-position:center !important;
+  }
+
+  /* Common fallback for the first/main gallery image */
+  #productGallery > img,
+  #productGallery .main-image,
+  #productGallery .main-image img{
+    max-height:62vh !important;
+    width:100% !important;
+    object-fit:contain !important;
+  }
+
+  /* Tighten thumbnail area slightly */
+  #productGallery .simple-gallery-thumbnails,
+  #productGallery .gallery-thumbnails,
+  #productGallery [class*="thumbnail"]{
+    margin-top:10px !important;
+  }
+
+  /* Bring product copy closer to the gallery */
+  .product-detail-copy{
+    margin-top:6px !important;
+  }
+
+  .product-detail-copy .eyebrow{
+    margin-top:0 !important;
+  }
+}
+
+@media(max-width:430px){
+  #productGallery .simple-gallery-main,
+  #productGallery .gallery-main,
+  #productGallery .product-gallery-main,
+  #productGallery [class*="gallery-main"]{
+    height:min(58vh,500px) !important;
+  }
+
+  #productGallery .simple-gallery-main img,
+  #productGallery .gallery-main img,
+  #productGallery .product-gallery-main img,
+  #productGallery [class*="gallery-main"] img,
+  #productGallery > img,
+  #productGallery .main-image,
+  #productGallery .main-image img{
+    max-height:58vh !important;
+  }
+}
+
 </style>
 </head>
 
