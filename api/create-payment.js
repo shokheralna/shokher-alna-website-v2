@@ -162,7 +162,11 @@ export default async function handler(req, res) {
           },
           pre_populated_data: {
             buyer_email: clean(customer.email),
-            buyer_phone_number: normalizePhone(customer.phone)
+            buyer_phone_number: normalizePhone(customer.phone),
+          buyer_address: {
+            first_name: customer.firstName,
+            last_name: customer.lastName
+          }
           }
         })
       }
