@@ -1,5 +1,4 @@
 import { validateProductForCheckout } from "./product-catalog.js";
-import { validateCheckoutInput } from "./checkout-input-validation.js";
 
 const ALLOWED_ORIGINS = new Set([
   "https://shokheralna.github.io",
@@ -335,21 +334,6 @@ export default async function handler(
         });
     }
 
-    try {
-      validateCheckoutInput(
-        customer,
-        delivery,
-        deliveryMethod
-      );
-    } catch (error) {
-      return res
-        .status(400)
-        .json({
-          error:
-            error.message
-        });
-    }
-
     if (
       !clean(
         customer.firstName
@@ -427,7 +411,7 @@ export default async function handler(
 
     const squareResponse =
       await fetch(
-        "https://connect.squareupsandbox.com/v2/online-checkout/payment-links",
+        "https://connect.squareup.com/v2/online-checkout/payment-links",
         {
           method: "POST",
 
