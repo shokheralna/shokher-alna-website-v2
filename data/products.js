@@ -1179,7 +1179,7 @@ window.SHOKHER_ALNA_PRODUCTS = [
     "category": "bags",
     "folder": "assets/products/bags/B030-Guzrati-Metal-Bag",
     "price": 60,
-    "status": "available",
+    "status": "active",
     "featured": true,
     "bestSeller": true,
     "newArrival": true,
