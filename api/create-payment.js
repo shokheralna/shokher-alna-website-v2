@@ -1,4 +1,5 @@
 import { validateProductForCheckout } from "./product-catalog.js";
+import { validateCheckoutInput } from "./checkout-input-validation.js";
 
 const ALLOWED_ORIGINS = new Set([
   "https://shokheralna.github.io",
@@ -331,6 +332,21 @@ export default async function handler(
         .json({
           error:
             "Invalid delivery method."
+        });
+    }
+
+    try {
+      validateCheckoutInput(
+        customer,
+        delivery,
+        deliveryMethod
+      );
+    } catch (error) {
+      return res
+        .status(400)
+        .json({
+          error:
+            error.message
         });
     }
 
