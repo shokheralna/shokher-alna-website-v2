@@ -1,12 +1,16 @@
 import { validateProductForCheckout } from "./product-catalog.js";
+import { validateCheckoutInput } from "./checkout-input-validation.js";
 
 const ALLOWED_ORIGINS = new Set([
   "https://shokheralna.github.io",
   "https://shokher-alna-website-v2.vercel.app"
 ]);
 
-const SHIPPING_FEE = 15;
+const LOW_SHIPPING_LIMIT = 50;
+const LOW_SHIPPING_FEE = 10;
+const STANDARD_SHIPPING_FEE = 15;
 const FREE_SHIPPING_THRESHOLD = 100;
+const FREE_SHIPPING_COUPON = "VIPSHIP";
 const MAX_QUANTITY_PER_LINE = 20;
 
 function setCors(req, res) {
@@ -163,7 +167,8 @@ function validateAndBuildItems(
 
 function calculateTotals(
   trustedItems,
-  deliveryMethod
+  deliveryMethod,
+  promoCode
 ) {
   const subtotal =
     trustedItems.reduce(
@@ -174,13 +179,29 @@ function calculateTotals(
       0
     );
 
-  const shipping =
+  const normalizedPromo =
+    clean(promoCode)
+      .toUpperCase();
+
+  const hasFreeShippingCoupon =
+    normalizedPromo ===
+      FREE_SHIPPING_COUPON;
+
+  let shipping = 0;
+
+  if (
     deliveryMethod ===
       "shipping" &&
+    !hasFreeShippingCoupon &&
     subtotal <
       FREE_SHIPPING_THRESHOLD
-      ? SHIPPING_FEE
-      : 0;
+  ) {
+    shipping =
+      subtotal <
+        LOW_SHIPPING_LIMIT
+        ? LOW_SHIPPING_FEE
+        : STANDARD_SHIPPING_FEE;
+  }
 
   return {
     subtotal:
@@ -334,6 +355,21 @@ export default async function handler(
         });
     }
 
+    try {
+      validateCheckoutInput(
+        customer,
+        delivery,
+        deliveryMethod
+      );
+    } catch (error) {
+      return res
+        .status(400)
+        .json({
+          error:
+            error.message
+        });
+    }
+
     if (
       !clean(
         customer.firstName
@@ -401,7 +437,8 @@ export default async function handler(
     const totals =
       calculateTotals(
         trustedItems,
-        deliveryMethod
+        deliveryMethod,
+        body.promoCode
       );
 
     const amountCents =
