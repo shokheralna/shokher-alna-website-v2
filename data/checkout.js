@@ -17,11 +17,52 @@ document.addEventListener("DOMContentLoaded", () => {
   const status = document.getElementById("checkoutStatus");
 
   const THRESHOLD = Number(config.freeShippingThreshold) || 100;
-  const SHIPPING_FEE = 15;
+  const LOW_SHIPPING_LIMIT = 50;
+  const LOW_SHIPPING_FEE = 10;
+  const STANDARD_SHIPPING_FEE = 15;
+  const FREE_SHIPPING_COUPON = "VIPSHIP";
   const API_URL =
     "https://shokher-alna-website-v2.vercel.app/api/create-payment";
 
   const money = v => `$${Number(v || 0).toFixed(2)}`;
+
+  let promoApplied = false;
+
+  const promoWrap = document.createElement("div");
+  promoWrap.style.marginTop = "14px";
+  promoWrap.innerHTML = `
+    <label for="promoCode" style="display:block;font-weight:600;margin-bottom:6px;">
+      Promo code
+    </label>
+    <div style="display:flex;gap:8px;">
+      <input
+        id="promoCode"
+        type="text"
+        autocomplete="off"
+        placeholder="Enter promo code"
+        style="flex:1;min-width:0;"
+      >
+      <button
+        id="applyPromo"
+        type="button"
+        style="width:auto;padding:10px 16px;"
+      >
+        Apply
+      </button>
+    </div>
+    <div id="promoMessage" style="margin-top:6px;font-size:0.9rem;"></div>
+  `;
+
+  if (shippingNote && shippingNote.parentNode) {
+    shippingNote.parentNode.insertBefore(
+      promoWrap,
+      shippingNote.nextSibling
+    );
+  }
+
+  const promoInput = document.getElementById("promoCode");
+  const applyPromoButton = document.getElementById("applyPromo");
+  const promoMessage = document.getElementById("promoMessage");
 
   pickupLocation.textContent = config.pickupLocation || "Jackson Heights";
 
@@ -38,7 +79,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function shippingAmount() {
     if (method() === "pickup") return 0;
-    return subtotal() >= THRESHOLD ? 0 : SHIPPING_FEE;
+
+    const sub = subtotal();
+
+    if (promoApplied) return 0;
+    if (sub >= THRESHOLD) return 0;
+    if (sub < LOW_SHIPPING_LIMIT) return LOW_SHIPPING_FEE;
+
+    return STANDARD_SHIPPING_FEE;
   }
 
   function imageUrl(item) {
@@ -115,10 +163,19 @@ document.addEventListener("DOMContentLoaded", () => {
     totalEl.textContent = money(sub + ship);
 
     if (isShipping) {
-      shippingNote.textContent =
-        sub >= THRESHOLD
-          ? "Your order qualifies for free shipping."
-          : `${money(SHIPPING_FEE)} standard shipping. Orders of ${money(THRESHOLD)} or more receive free shipping.`;
+      if (promoApplied) {
+        shippingNote.textContent =
+          "VIPSHIP applied — your shipping is FREE.";
+      } else if (sub >= THRESHOLD) {
+        shippingNote.textContent =
+          "Your order qualifies for free shipping.";
+      } else if (sub < LOW_SHIPPING_LIMIT) {
+        shippingNote.textContent =
+          `${money(LOW_SHIPPING_FEE)} shipping for orders under ${money(LOW_SHIPPING_LIMIT)}.`;
+      } else {
+        shippingNote.textContent =
+          `${money(STANDARD_SHIPPING_FEE)} shipping. Orders of ${money(THRESHOLD)} or more receive free shipping.`;
+      }
     }
   }
 
@@ -140,6 +197,10 @@ document.addEventListener("DOMContentLoaded", () => {
         state: data.state || "",
         zip: data.zip || ""
       },
+      promoCode:
+        promoApplied
+          ? FREE_SHIPPING_COUPON
+          : "",
       items: cart.map(item => ({
         id: item.id,
         name: item.name,
@@ -207,6 +268,37 @@ document.addEventListener("DOMContentLoaded", () => {
   content.hidden = false;
 
   renderItems();
+
+  if (applyPromoButton && promoInput) {
+    applyPromoButton.addEventListener("click", () => {
+      const entered = String(promoInput.value || "")
+        .trim()
+        .toUpperCase();
+
+      if (entered === FREE_SHIPPING_COUPON) {
+        promoApplied = true;
+        promoInput.value = FREE_SHIPPING_COUPON;
+        promoMessage.textContent =
+          "VIPSHIP applied — free shipping unlocked.";
+      } else {
+        promoApplied = false;
+        promoMessage.textContent =
+          entered
+            ? "That promo code is not valid."
+            : "Enter a promo code first.";
+      }
+
+      updateSummary();
+    });
+
+    promoInput.addEventListener("input", () => {
+      if (promoApplied) {
+        promoApplied = false;
+        promoMessage.textContent = "";
+        updateSummary();
+      }
+    });
+  }
 
   form.querySelectorAll('input[name="deliveryMethod"]').forEach(input =>
     input.addEventListener("change", updateSummary)
