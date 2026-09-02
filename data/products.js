@@ -8,7 +8,7 @@ window.SHOKHER_ALNA_PRODUCTS = [
     "name": "Green & White Chand Tara Set",
     "category": "jewelry",
     "folder": "assets/products/jewelry/J001-Green-White-Chand-Tara-Set",
-    "price": 20,
+    "price": 1,
     "status": "active",
     "featured": false,
     "bestSeller": false,
