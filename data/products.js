@@ -13,7 +13,7 @@ window.SHOKHER_ALNA_PRODUCTS = [
     "featured": false,
     "bestSeller": false,
     "newArrival": false,
-    "orderEnabled": "true",
+    "orderEnabled": true,
     "description": "Product details will be added later."
   },
   {
