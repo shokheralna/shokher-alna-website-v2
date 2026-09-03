@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const PROCESSING_FEE_RATE = 0.029;
   const PROCESSING_FEE_FIXED = 0.30;
   const API_URL =
-    "https://shokher-alna-website-v2.vercel.app/api/create-payment";
+    "https://shokher-alna-website-v2.vercel.app/api/create-payment-embedded-test";
 
   const money = v => `$${Number(v || 0).toFixed(2)}`;
 
