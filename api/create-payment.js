@@ -11,6 +11,8 @@ const LOW_SHIPPING_FEE = 10;
 const STANDARD_SHIPPING_FEE = 15;
 const FREE_SHIPPING_THRESHOLD = 100;
 const FREE_SHIPPING_COUPON = "VIPSHIP";
+const PROCESSING_FEE_RATE = 0.029;
+const PROCESSING_FEE_FIXED = 0.30;
 const MAX_QUANTITY_PER_LINE = 20;
 
 function setCors(req, res) {
@@ -203,6 +205,26 @@ function calculateTotals(
         : STANDARD_SHIPPING_FEE;
   }
 
+  const amountBeforeProcessingFee =
+    subtotal + shipping;
+
+  /*
+   * Processing fee shown to the customer.
+   * Based on Square's standard Online API rate:
+   * 2.9% + $0.30.
+   *
+   * This is recalculated on the server so the browser
+   * cannot lower or remove it.
+   */
+  const processingFee =
+    Number(
+      (
+        amountBeforeProcessingFee *
+          PROCESSING_FEE_RATE +
+        PROCESSING_FEE_FIXED
+      ).toFixed(2)
+    );
+
   return {
     subtotal:
       Number(
@@ -214,11 +236,13 @@ function calculateTotals(
         shipping.toFixed(2)
       ),
 
+    processingFee,
+
     total:
       Number(
         (
-          subtotal +
-          shipping
+          amountBeforeProcessingFee +
+          processingFee
         ).toFixed(2)
       )
   };
