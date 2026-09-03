@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Checkout | Shokher Alna</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+.checkout-page{padding:64px 0 100px;background:#fbf7ef}.checkout-shell{width:min(1180px,92%);margin:auto}.checkout-head{margin-bottom:30px}.checkout-head h1{margin:0;font-family:"Playfair Display",serif;font-size:clamp(2.8rem,6vw,5rem);line-height:1}.checkout-head p:last-child{max-width:650px;color:#746a64}.checkout-grid{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:34px;align-items:start}.checkout-card{border:1px solid rgba(63,83,64,.16);border-radius:24px;background:#fffdf9}.checkout-form{padding:28px}.checkout-section+.checkout-section{margin-top:30px;padding-top:26px;border-top:1px solid rgba(63,83,64,.14)}.checkout-section h2{font-family:"Playfair Display",serif}.checkout-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.checkout-field{display:grid;gap:7px}.checkout-field.full{grid-column:1/-1}.checkout-field label{font-size:.82rem;font-weight:700}.checkout-field input{min-height:48px;padding:11px 13px;border:1px solid rgba(63,83,64,.22);border-radius:12px;font:inherit}.delivery-options{display:grid;gap:12px}.delivery-option{display:flex;gap:12px;padding:16px;border:1px solid rgba(63,83,64,.18);border-radius:16px}.delivery-option small{display:block;color:#746a64}.checkout-note{padding:13px 15px;border-radius:14px;background:rgba(111,127,105,.10);color:#55634f;font-size:.84rem}.checkout-summary{position:sticky;top:110px;overflow:hidden}.summary-head{padding:22px;border-bottom:1px solid rgba(63,83,64,.14)}.summary-head h2{margin:0;font-family:"Playfair Display",serif}.checkout-items{max-height:420px;overflow-y:auto;padding:8px 22px}.checkout-item{display:grid;grid-template-columns:68px 1fr auto;gap:12px;padding:14px 0;border-bottom:1px solid rgba(63,83,64,.12)}.checkout-item-image{width:68px;height:78px;border-radius:10px;overflow:hidden;background:#f3eee6}.checkout-item-image img{width:100%;height:100%;object-fit:contain}.checkout-item-copy strong,.checkout-item-copy small{display:block}.checkout-item-copy small{color:#746a64;margin-top:3px}.summary-totals{padding:18px 22px 22px;background:#fbf7ef}.total-row{display:flex;justify-content:space-between;padding:5px 0}.total-row.total{margin-top:10px;padding-top:14px;border-top:1px solid rgba(63,83,64,.16);font-weight:700}.continue-button{width:100%;min-height:50px;margin-top:18px;border:0;border-radius:999px;background:#3f5340;color:#fff;font:inherit;font-weight:700}.checkout-empty{padding:40px 22px;text-align:center;color:#746a64}.checkout-status{min-height:24px;color:#55634f;font-size:.82rem}@media(max-width:900px){.checkout-grid{grid-template-columns:1fr}.checkout-summary{position:static}}@media(max-width:620px){.checkout-fields{grid-template-columns:1fr}.checkout-field.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<div class="announcement-bar"><div class="announcement-inner"><span>Free shipping on orders over $100</span><span class="announcement-divider">•</span><span>Free local pickup in Jackson Heights</span></div></div>
+<header class="site-header" id="siteHeader"><div class="nav-container">
+<a class="brand" href="../index.html"><img class="brand-logo" src="../assets/logo/logo.png" alt="Shokher Alna logo"><span class="brand-copy"><strong>Shokher Alna</strong><small>Traditional &amp; Elegant Fashion</small></span></a>
+<nav class="desktop-nav"><a class="nav-link" href="../index.html">Home</a><div class="nav-dropdown open-on-hover"><button class="nav-link dropdown-trigger active" type="button">Shop <span class="chevron">⌄</span></button><div class="dropdown-menu"><a href="bags.html">Bags</a><a href="jewelry.html">Jewelry</a><a href="sarees.html">Sarees</a><a href="clothing.html">Clothing</a><a href="handpicked-finds.html">Handpicked Finds</a></div></div><a class="nav-link" href="../index.html#new-arrivals">New Arrivals</a><a class="nav-link" href="../index.html#best-sellers">Best Sellers</a><a class="nav-link" href="about.html">About</a><a class="nav-link" href="contact.html">Contact</a></nav>
+<div class="header-actions"><a class="social-link" href="https://www.instagram.com/shokher_alna_usa/" target="_blank">Instagram</a><a class="social-link" href="https://www.facebook.com/ShokherAlnaUsa" target="_blank">Facebook</a></div>
+</div></header>
+<main class="checkout-page"><div class="checkout-shell">
+<div class="checkout-head"><p class="eyebrow">Secure order details</p><h1>Checkout</h1><p>Review your selected products and enter your contact and delivery information.</p></div>
+<div class="checkout-grid">
+<form class="checkout-card checkout-form" id="checkoutForm">
+<section class="checkout-section"><h2>Contact information</h2><div class="checkout-fields">
+<div class="checkout-field"><label for="firstName">First name</label><input id="firstName" name="firstName" autocomplete="given-name" minlength="2" maxlength="50" required></div>
+<div class="checkout-field"><label for="lastName">Last name</label><input id="lastName" name="lastName" autocomplete="family-name" minlength="2" maxlength="50" required></div>
+<div class="checkout-field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" maxlength="254" required></div>
+<div class="checkout-field"><label for="phone">Phone</label><input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="20" placeholder="(929) 370-7785" required></div>
+</div></section>
+<section class="checkout-section"><h2>Delivery method</h2><div class="delivery-options">
+<label class="delivery-option"><input type="radio" name="deliveryMethod" value="shipping" checked><span><strong>Shipping</strong><small>Free on orders of $100 or more.</small></span></label>
+<label class="delivery-option"><input type="radio" name="deliveryMethod" value="pickup"><span><strong>Local pickup</strong><small id="pickupLocation">Jackson Heights</small></span></label>
+</div><p class="checkout-note" id="pickupNote" hidden>Pickup details will be coordinated after the order is confirmed.</p></section>
+<section class="checkout-section" id="shippingSection"><h2>Shipping address</h2><div class="checkout-fields">
+<div class="checkout-field full"><label for="address1">Street address</label><input id="address1" name="address1" autocomplete="address-line1" minlength="5" maxlength="100" required></div>
+<div class="checkout-field full"><label for="address2">Apartment / unit (optional)</label><input id="address2" name="address2" autocomplete="address-line2" maxlength="100"></div>
+<div class="checkout-field"><label for="city">City</label><input id="city" name="city" autocomplete="address-level2" minlength="2" maxlength="60" required></div>
+<div class="checkout-field"><label for="state">State</label><input id="state" name="state" autocomplete="address-level1" maxlength="2" placeholder="NY" required></div>
+<div class="checkout-field"><label for="zip">ZIP code</label><input id="zip" name="zip" autocomplete="postal-code" inputmode="numeric" maxlength="10" placeholder="11372" required></div>
+</div><p class="checkout-note" id="shippingNote"></p></section>
+</form>
+<aside class="checkout-card checkout-summary">
+<div class="summary-head"><p class="eyebrow">Your order</p><h2>Order summary</h2></div>
+<div id="checkoutEmpty" class="checkout-empty" hidden>Your cart is empty.<br><a href="../index.html#new-arrivals">Continue shopping →</a></div>
+<div id="checkoutContent"><div class="checkout-items" id="checkoutItems"></div><div class="summary-totals">
+<div class="total-row"><span>Subtotal</span><strong id="checkoutSubtotal">$0.00</strong></div>
+<div class="total-row"><span>Shipping</span><strong id="checkoutShipping">—</strong></div>
+<div class="total-row total"><span>Total</span><strong id="checkoutTotal">$0.00</strong></div>
+<button class="continue-button" id="continuePayment" type="button">Continue to Payment</button>
+<p class="checkout-status" id="checkoutStatus"></p>
+</div></div>
+</aside>
+</div></div></main>
+<script src="../data/config.js"></script>
+<script src="../data/products.js"></script>
+<script src="../script.js"></script>
+<script src="../data/checkout-validation.js"></script>
+<script src="../data/checkout.js"></script>
+</body>
+</html>
