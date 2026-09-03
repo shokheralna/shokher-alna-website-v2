@@ -21,12 +21,111 @@ document.addEventListener("DOMContentLoaded", () => {
   const LOW_SHIPPING_FEE = 10;
   const STANDARD_SHIPPING_FEE = 15;
   const FREE_SHIPPING_COUPON = "VIPSHIP";
+  const PROCESSING_FEE_RATE = 0.029;
+  const PROCESSING_FEE_FIXED = 0.30;
   const API_URL =
     "https://shokher-alna-website-v2.vercel.app/api/create-payment";
 
   const money = v => `$${Number(v || 0).toFixed(2)}`;
 
   let promoApplied = false;
+
+  // Add a processing-fee line to the existing checkout summary.
+  // This keeps checkout.html unchanged.
+  let processingFeeEl = document.getElementById("checkoutProcessingFee");
+
+  if (!processingFeeEl && totalEl) {
+    const totalRow = totalEl.parentElement;
+    if (totalRow && totalRow.parentNode) {
+      const feeRow = document.createElement("div");
+      feeRow.className = totalRow.className;
+      feeRow.innerHTML = `
+        <span>Processing Fee</span>
+        <span id="checkoutProcessingFee">$0.00</span>
+      `;
+      totalRow.parentNode.insertBefore(feeRow, totalRow);
+      processingFeeEl = feeRow.querySelector("#checkoutProcessingFee");
+    }
+  }
+
+  // Full-page redirect overlay shown while the secure Square checkout is prepared.
+  const redirectOverlay = document.createElement("div");
+  redirectOverlay.id = "paymentRedirectOverlay";
+  redirectOverlay.hidden = true;
+  redirectOverlay.innerHTML = `
+    <div class="payment-redirect-card" role="status" aria-live="polite">
+      <div class="payment-redirect-spinner" aria-hidden="true"></div>
+      <strong>Preparing your secure payment</strong>
+      <span>Please wait while we redirect you to Square...</span>
+    </div>
+  `;
+
+  const overlayStyle = document.createElement("style");
+  overlayStyle.textContent = `
+    #paymentRedirectOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(255, 252, 247, 0.92);
+      backdrop-filter: blur(3px);
+    }
+
+    #paymentRedirectOverlay[hidden] {
+      display: none;
+    }
+
+    .payment-redirect-card {
+      width: min(92vw, 390px);
+      padding: 30px 24px;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 14px 45px rgba(0, 0, 0, 0.16);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .payment-redirect-card strong {
+      font-size: 1.12rem;
+    }
+
+    .payment-redirect-card span {
+      font-size: 0.95rem;
+      line-height: 1.45;
+      opacity: 0.75;
+    }
+
+    .payment-redirect-spinner {
+      width: 38px;
+      height: 38px;
+      margin-bottom: 5px;
+      border: 4px solid rgba(0, 0, 0, 0.12);
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: shokherPaymentSpin 0.8s linear infinite;
+    }
+
+    @keyframes shokherPaymentSpin {
+      to { transform: rotate(360deg); }
+    }
+  `;
+
+  document.head.appendChild(overlayStyle);
+  document.body.appendChild(redirectOverlay);
+
+  function showRedirectOverlay() {
+    redirectOverlay.hidden = false;
+  }
+
+  function hideRedirectOverlay() {
+    redirectOverlay.hidden = true;
+  }
 
   const promoWrap = document.createElement("div");
   promoWrap.style.marginTop = "14px";
@@ -87,6 +186,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (sub < LOW_SHIPPING_LIMIT) return LOW_SHIPPING_FEE;
 
     return STANDARD_SHIPPING_FEE;
+  }
+
+  function processingFeeAmount() {
+    const base = subtotal() + shippingAmount();
+    return Number(
+      (base * PROCESSING_FEE_RATE + PROCESSING_FEE_FIXED).toFixed(2)
+    );
   }
 
   function imageUrl(item) {
@@ -160,7 +266,13 @@ document.addEventListener("DOMContentLoaded", () => {
       shippingEl.textContent = money(ship);
     }
 
-    totalEl.textContent = money(sub + ship);
+    const processingFee = processingFeeAmount();
+
+    if (processingFeeEl) {
+      processingFeeEl.textContent = money(processingFee);
+    }
+
+    totalEl.textContent = money(sub + ship + processingFee);
 
     if (isShipping) {
       if (promoApplied) {
@@ -218,6 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     button.disabled = true;
     status.textContent = "Preparing your secure payment...";
+    showRedirectOverlay();
 
     try {
       const payload = buildPayload();
@@ -254,6 +367,7 @@ document.addEventListener("DOMContentLoaded", () => {
       status.textContent =
         error.message || "We could not start payment. Please try again.";
       button.disabled = false;
+      hideRedirectOverlay();
     }
   }
 
