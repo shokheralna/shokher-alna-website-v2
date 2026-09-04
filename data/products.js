@@ -1187,6 +1187,19 @@ window.SHOKHER_ALNA_PRODUCTS = [
     "description": "A statement metal bag featuring colorful handwork, an ornate metal frame, and detailed embellishments."
   },
   {
+    "id": "B034",
+    "name": "Peacock Square Bag",
+    "category": "bags",
+    "folder": "assets/products/bags/B034-Peacock Square Bag",
+    "price": 100,
+    "status": "active",
+    "featured": true,
+    "bestSeller": false,
+    "newArrival": true,
+    "orderEnabled": true,
+    "description": ""
+  },
+  {
     "id": "J064",
     "name": "Small Earring 2",
     "category": "jewelry",
