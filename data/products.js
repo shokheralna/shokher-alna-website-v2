@@ -1199,6 +1199,117 @@ window.SHOKHER_ALNA_PRODUCTS = [
     "orderEnabled": true,
     "description": ""
   },
+
+  {
+    "id": "B035",
+    "name": "Royal Peacock Bag",
+    "category": "bags",
+    "folder": "assets/products/bags/B035-Royal Peacock Bag",
+    "price": 100,
+    "status": "active",
+    "featured": true,
+    "bestSeller": false,
+    "newArrival": true,
+    "orderEnabled": true,
+    "description": ""
+  },
+  
+  {
+    "id": "B036",
+    "name": "Mini Lotus Square Bag",
+    "category": "bags",
+    "folder": "assets/products/bags/B036-Mini Lotus Square Bag",
+    "price": 80,
+    "status": "active",
+    "featured": true,
+    "bestSeller": false,
+    "newArrival": true,
+    "orderEnabled": true,
+    "description": ""
+  },
+
+  {
+    "id": "B037",
+    "name": "Lotus Potli Bag",
+    "category": "bags",
+    "folder": "assets/products/bags/B037-Lotus Potli Bag",
+    "price": 100,
+    "status": "active",
+    "featured": true,
+    "bestSeller": false,
+    "newArrival": true,
+    "orderEnabled": true,
+    "description": ""
+  },
+
+  {
+    "id": "B038",
+    "name": "Semi Circle Potli Bag",
+    "category": "bags",
+    "folder": "assets/products/bags/B038-Semi Circle Potli Bag",
+    "price": 80,
+    "status": "active",
+    "featured": true,
+    "bestSeller": false,
+    "newArrival": true,
+    "orderEnabled": true,
+    "description": ""
+  },
+  
+  {
+    "id": "B039",
+    "name": "Peacock Circle Potli Bag",
+    "category": "bags",
+    "folder": "assets/products/bags/B039-Peacock Circle Potli Bag",
+    "price": 100,
+    "status": "active",
+    "featured": true,
+    "bestSeller": false,
+    "newArrival": true,
+    "orderEnabled": true,
+    "description": ""
+  },
+  {
+    "id": "B040",
+    "name": "Moyur Potli Sling Bag",
+    "category": "bags",
+    "folder": "assets/products/bags/B040-Moyur Potli Sling Bag",
+    "price": 80,
+    "status": "active",
+    "featured": true,
+    "bestSeller": false,
+    "newArrival": true,
+    "orderEnabled": true,
+    "description": ""
+  },
+  {
+    "id": "B041",
+    "name": "Lotus Handbag",
+    "category": "bags",
+    "folder": "assets/products/bags/B041-Lotus Handbag",
+    "price": 100,
+    "status": "active",
+    "featured": true,
+    "bestSeller": false,
+    "newArrival": true,
+    "orderEnabled": true,
+    "description": ""
+  },
+  {
+    "id": "B042",
+    "name": "Floral Square Box Bag",
+    "category": "bags",
+    "folder": "assets/products/bags/B042-Floral Square Box Bag",
+    "price": 100,
+    "status": "active",
+    "featured": true,
+    "bestSeller": false,
+    "newArrival": true,
+    "orderEnabled": true,
+    "description": ""
+  },
+  
+  
   {
     "id": "J064",
     "name": "Small Earring 2",
