@@ -254,14 +254,14 @@ window.SHOKHER_ALNA_PRODUCTS = [
     "id": "B011",
     "name": "Azrak Hut Bag",
     "category": "bags",
-    "folder": "assets/products/bags/B011-Azrak-Hut-Bag",
-    "price": null,
-    "status": "hidden",
+    "folder": "assets/products/bags/B011-Ajrak-Hut-Bag",
+    "price": 60,
+    "status": "Active",
     "featured": false,
     "bestSeller": false,
     "newArrival": false,
-    "orderEnabled": false,
-    "description": "Product details will be added later."
+    "orderEnabled": true,
+    "description": "Leather Hut bag with beautiful ajrak work."
   },
   {
     "id": "B012",
