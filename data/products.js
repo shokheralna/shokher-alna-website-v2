@@ -252,7 +252,7 @@ window.SHOKHER_ALNA_PRODUCTS = [
   },
   {
     "id": "B011",
-    "name": "Azrak Hut Bag",
+    "name": "Ajrak Hut Bag",
     "category": "bags",
     "folder": "assets/products/bags/B011-Ajrak-Hut-Bag",
     "price": 60,
